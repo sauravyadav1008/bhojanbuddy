@@ -1,16 +1,25 @@
 # BhojanBuddy
 
 A food tracking application with BMI calculation and food recognition features.
-(app_images/11.jpg)
+
+![Main Preview](app_images/11.jpg)
 
 ---
 
 ## 📱 App Screenshots
 
-
-| Login Screen | History Screen | Food Scan |
-|:------------:|:-------------:|:---------:|
+| Login Screen              | History Screen            | Food Scan                |
+|:------------------------:|:------------------------:|:-----------------------:|
 | ![Login](app_images/9.jpg) | ![History](app_images/1.jpg) | ![Scan](app_images/5.jpg) |
+
+---
+
+## 🖼 More App Images
+
+| ![](app_images/10.jpg) | ![](app_images/2.jpg) | ![](app_images/3.jpg) |
+|:----------------------:|:---------------------:|:---------------------:|
+| ![](app_images/4.jpg)  | ![](app_images/6.jpg) | ![](app_images/7.jpg) |
+| ![](app_images/8.jpg)  |                       |                       |
 
 ---
 
@@ -70,14 +79,6 @@ If you encounter connection issues:
 4. Ensure the backend server is running with `host=0.0.0.0` to accept external connections
 5. Check the server logs for any error messages
 
----
-(app_images/10.jpg)
-(app_images/2.jpg)
-(app_images/3.jpg)
-(app_images/4.jpg)
-(app_images/6.jpg)
-(app_images/7.jpg)
-(app_images/8.jpg)
 ---
 
 ## 📄 License
