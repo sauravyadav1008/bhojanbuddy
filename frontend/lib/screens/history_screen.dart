@@ -1,4 +1,3 @@
-// lib/screens/history_screen.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -35,35 +34,26 @@ class _HistoryScreenState extends State<HistoryScreen> {
     });
 
     try {
-      // Get the current user ID
       final userId = await ApiService.getCurrentUserId();
-      
       if (userId == null) {
         throw Exception("User not logged in");
       }
-      
-      // Get BMI history from the API
+
       final bmiHistory = await ApiService.getBMIHistory(userId);
-      
-      // Convert the API response to the format needed for the UI
+
       final List<Map<String, dynamic>> data = bmiHistory.map<Map<String, dynamic>>((item) {
         return {
-          'image_path': 'assets/images/placeholder.png',
+          'image_path': item['image_path'] ?? 'assets/images/placeholder.png',
           'date': DateTime.parse(item['created_at']),
-          'bmi': item['bmi'],
-          'bmi_category': item['bmi_category'],
-          'height': item['height'],
-          'weight': item['weight'],
-          'mode': item['mode'],
         };
       }).toList();
-      
+
       setState(() {
         _history = data;
         _isLoading = false;
       });
     } catch (e) {
-      print("Error loading BMI history: $e");
+      print("Error loading history: $e");
       setState(() {
         _errorMessage = "Failed to load history: ${e.toString()}";
         _isLoading = false;
@@ -76,7 +66,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    
+
     if (_errorMessage != null) {
       return Center(
         child: Column(
@@ -96,10 +86,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ),
       );
     }
-    
+
     return Scaffold(
       body: _history.isEmpty
-          ? const Center(child: Text("No BMI records yet."))
+          ? const Center(child: Text("No food scan records yet."))
           : RefreshIndicator(
               onRefresh: _loadHistory,
               child: ListView.builder(
@@ -107,52 +97,31 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 itemBuilder: (context, index) {
                   final item = _history[index];
                   final bgColor = _colors[index % _colors.length];
-                  final formattedDate = DateFormat(
-                    'dd MMM yyyy – hh:mm a',
-                  ).format(item['date'] as DateTime);
+                  final formattedDate = DateFormat('dd MMM yyyy – hh:mm a').format(item['date'] as DateTime);
+
                   return Card(
                     color: bgColor,
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 16,
-                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "BMI: ${item['bmi'].toStringAsFixed(1)}",
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                item['bmi_category'],
-                                style: TextStyle(
-                                  color: _getBmiCategoryColor(item['bmi_category']),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: _buildImage(item['image_path']),
                           ),
-                          const SizedBox(height: 8),
-                          Text("Height: ${item['height']} cm"),
-                          Text("Weight: ${item['weight']} kg"),
-                          Text("Mode: ${item['mode']}"),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Date: $formattedDate",
-                            style: TextStyle(
-                              color: Colors.grey.shade700,
-                              fontSize: 12,
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              formattedDate,
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
@@ -164,19 +133,31 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
     );
   }
-  
-  Color _getBmiCategoryColor(String category) {
-    switch (category.toLowerCase()) {
-      case 'underweight':
-        return Colors.blue;
-      case 'normal':
-        return Colors.green;
-      case 'overweight':
-        return Colors.orange;
-      case 'obese':
-        return Colors.red;
-      default:
-        return Colors.black;
+
+  Widget _buildImage(String imagePath) {
+    if (imagePath.startsWith('http')) {
+      return Image.network(
+        imagePath,
+        width: 80,
+        height: 80,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) =>
+            Image.asset('assets/images/placeholder.png', width: 80, height: 80, fit: BoxFit.cover),
+      );
+    } else if (File(imagePath).existsSync()) {
+      return Image.file(
+        File(imagePath),
+        width: 80,
+        height: 80,
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.asset(
+        imagePath,
+        width: 80,
+        height: 80,
+        fit: BoxFit.cover,
+      );
     }
   }
 }

@@ -107,7 +107,7 @@ class _BMIInputScreenState extends State<BMIInputScreen> {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            Lottie.asset('assets/lottie/bmi_scale.json', height: 180),
+            Image.asset('assets/images/bhojanbuddy.png', height: 180),
             const SizedBox(height: 20),
             Text(
               "Let's personalize your experience",

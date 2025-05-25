@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "hale-lantern-460907-v3",
+  "private_key_id": "3dc67c74a0353d20adf7056261add23a87500602",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDPOyZz6PRaKDQv\nNyu30D3lqmf9a6Zg/1O0xAI+v3wcQYVqAM8lPpCDKByAt6Fu0BqLjr28dN7yD5Vo\nTD8D8qZSneJZyomTuhEA5kD5JNuFosO8qVb9mfp0Tc5wEqZbxJBzWQkw/hHxQru0\nK3+Kr+jzpVWaK6fTxuH/aFyV9o0gVg2SPy4YMO/2rzvTJwueA714rFEVTZsaJJyt\ngdaJRraExNvphStAXkahWQLJX4CaZ/JLZCiXCkKFvr59GcmJzwiG1Gr64aw3Ogjv\nOk1AewVnTerYj+9xtb+S++rdSEbyYULYFvqCqKT/zlRwLKIilabR4RS+i7d5x48S\nyWQKBq/VAgMBAAECggEAEn5EVba1y6/nzEjfoWU3iN3WruJi9CgE985AJwpekIT2\nW3ncAoZdTh8PwBrjEKkInWitHPrPBIoIesjHHNqUJi5Jy1qMQX8q0ko6BSHZZ0kZ\nr6XrCfGqTKO+5vh7GRhnDawl6lXaEw4yAweYt68wGkIoa/w2W2tVsr3E+WsJuBdc\nuYFskCPz6aLD/fmBRzoCuhsn/Y5bz6iy4eK6VWhlMtkHGxgXEP+qxcpqm21eGBB3\n+aXdSP4IWwbF7cybsAkJTOB/U6VT1VHxD5/chcv6J3414UfLA6FqsGjljeMmq/2Y\n63gfoNFfcem5a1yxH+ogA5rLsLi8/5wioiiM9GE6FwKBgQDs46HgVK36+R3WvEBB\n6Ol7i5TTdwBN3h8dnbLtwJEtGYViBK5WdnZGW06S4qGYHzJPCRgmH2c8pZuo9JPi\nJa1faSJo55NxKJc/DlA2TohBpj4HrDJ0BA+vVlfyk1om6b1QHh3Se7KS2F9EoaAB\nIUEUlZjmVAtm/wZejexqkbjtDwKBgQDf8wBmffURap4rsag/qZ8mrErlhgl7ocTS\nT+3j5cN+0MRZCaonqrr93jSdplq98B8dh9uEzfDr9cE2SxwFK/DAsOMiFpqGqquz\njVA/L7t7no3H7PnSj0S+loW5netjBTx/Rm93sdMmvHhC3OxsoKCVku/QlxYGy9B6\nJwIWjzXc2wKBgHgKWetNveQh/Obl+kHr/vTmJIKMGRFcb7QYR6WHIYoTFq425QlX\nelPozQZN5ckqddnrJ9uZqjznRtv1JENDCHoC0rcKMoLzKMGBRVBft1hdH63Pqrlz\nnWcif+qilNqHM7G3sTEKEdGr54rlxCkOauY9cH+3Mxf8P4QGszjFo0otAoGAOIM/\nxJ1gbGa1R11rkbUiHkY4GDd8ySAHZPMamvnuHWBdTAKuV5gz28BpEqdaGrgvgeo4\nsQivFTxM54CIr51pAZchmgaONBF5hrPQXkGTVBystpjMaiARPu8JC9AYCELYA14o\n3tGW8R16U5UgbEEUhOoxbjfSLSDdmRWi50J4WyUCgYBinzaBcfu2m+iUKQdd2ZnZ\nlZr1LOBgx8Obbsnt1R5F2XVBUn5ocEsteOU2wRRsNWGZ1nSURYX6YJjpG6azC96X\n9yugJws7SlE83WqUGmh1JojTYy9y1fv9iimQsKyLykqXP/VIOVkjD25v13JkKejc\nhMFWWm+SRDerHTmHqFwMXQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "bhojanbuddy@hale-lantern-460907-v3.iam.gserviceaccount.com",
+  "client_id": "112472380090478500476",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bhojanbuddy%40hale-lantern-460907-v3.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
