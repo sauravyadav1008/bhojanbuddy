@@ -8,8 +8,7 @@ A food tracking application with BMI calculation and food recognition features.
 
 
 | Login Screen | History Screen | Food Scan |
-|:------------:|:-------------:|:---------:|
-| ![Login](assets/screenshots/login.png) | ![History](assets/screenshots/history.png) | ![Scan](assets/screenshots/scan.png) |
+
 
 ---
 
