@@ -1,6 +1,7 @@
 # BhojanBuddy
 
 A food tracking application with BMI calculation and food recognition features.
+(C:\Users\rishr\BB\bhojanbuddy\app_images\11.png)
 
 ---
 
@@ -8,7 +9,8 @@ A food tracking application with BMI calculation and food recognition features.
 
 
 | Login Screen | History Screen | Food Scan |
-
+|:------------:|:-------------:|:---------:|
+| ![Login](C:\Users\rishr\BB\bhojanbuddy\app_images\9.jpg) | ![History](C:\Users\rishr\BB\bhojanbuddy\app_images\1.jpg) | ![Scan](C:\Users\rishr\BB\bhojanbuddy\app_images\5.jpg) |
 
 ---
 
@@ -69,15 +71,13 @@ If you encounter connection issues:
 5. Check the server logs for any error messages
 
 ---
-
-## 📸 More Screenshots
-
-<!-- 
-Add more usage screenshots or GIFs here.
-Example:
-![BMI Calculation](assets/screenshots/bmi.png)
--->
-
+(C:\Users\rishr\BB\bhojanbuddy\app_images\10.jpg)
+(C:\Users\rishr\BB\bhojanbuddy\app_images\2.jpg)
+(C:\Users\rishr\BB\bhojanbuddy\app_images\3.jpg)
+(C:\Users\rishr\BB\bhojanbuddy\app_images\4.jpg)
+(C:\Users\rishr\BB\bhojanbuddy\app_images\6.jpg)
+(C:\Users\rishr\BB\bhojanbuddy\app_images\7.jpg)
+(C:\Users\rishr\BB\bhojanbuddy\app_images\8.jpg)
 ---
 
 ## 📄 License
