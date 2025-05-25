@@ -9,41 +9,13 @@ import 'services/api_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load saved server URL
-  final prefs = await SharedPreferences.getInstance();
-
-  // Clear any potentially incorrect saved URL (temporary fix)
-  // Uncomment this line if you need to reset the server URL
-  // await prefs.remove('server_url');
-
-  final savedUrl = prefs.getString('server_url');
-  if (savedUrl != null && savedUrl.isNotEmpty) {
-    print("Using saved server URL: $savedUrl");
-    ApiService.updateBaseUrl(savedUrl);
-  } else {
-    // Make sure we're using the correct IP for physical devices
-    print("No saved server URL found, using default");
-    ApiService.updateBaseUrl("http://192.168.4.86:5000");
-  }
-
-  // Test the connection to the server
+  // Initialize the API service with the correct URL
   try {
-    print("Testing server connection...");
-    final connectionResults = await ApiService.testServerConnection();
-    final workingUrls =
-        connectionResults.entries
-            .where((e) => e.value)
-            .map((e) => e.key)
-            .toList();
-
-    if (workingUrls.isNotEmpty) {
-      print("Found working server URLs: $workingUrls");
-      // First working URL is already set as baseUrl in testServerConnection
-    } else {
-      print("No working server URLs found. Will try again when needed.");
-    }
+    print("Initializing API service...");
+    await ApiService.initializeApiService();
+    print("API service initialized with base URL: ${ApiService.baseUrl}");
   } catch (e) {
-    print("Error testing server connection: $e");
+    print("Error initializing API service: $e");
   }
 
   runApp(const BhojanBuddyApp());

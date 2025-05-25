@@ -27,8 +27,6 @@ class _ResultScreenState extends State<ResultScreen> {
   bool _isLoading = true;
   String _mode = 'beast';
   List<String> _selectedDiseases = [];
-  Map<String, double> _currentNutrients = {};
-  Map<String, double> _maxNutrients = {};
   bool _nutrientsAdded = false;
 
   @override
@@ -51,15 +49,9 @@ class _ResultScreenState extends State<ResultScreen> {
       // Load selected diseases
       final diseases = prefs.getStringList('selected_diseases') ?? [];
 
-      // Load current and max nutrients
-      final currentNutrients = await NutrientService.getCurrentNutrients();
-      final maxNutrients = await NutrientService.getMaxNutrients();
-
       setState(() {
         _mode = mode;
         _selectedDiseases = diseases;
-        _currentNutrients = currentNutrients;
-        _maxNutrients = maxNutrients;
         _isLoading = false;
       });
     } catch (e) {
@@ -89,11 +81,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
     await NutrientService.addNutrients(nutrients);
 
-    // Reload current nutrients
-    final currentNutrients = await NutrientService.getCurrentNutrients();
-
     setState(() {
-      _currentNutrients = currentNutrients;
       _nutrientsAdded = true;
     });
 

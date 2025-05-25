@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, Literal
+from typing import Optional, Literal, List
 from datetime import datetime
 
 class UserBase(BaseModel):
@@ -13,6 +13,7 @@ class UserCreate(UserBase):
     height: Optional[float] = None
     weight: Optional[float] = None
     preferred_mode: Optional[Literal["beast", "swasthya"]] = "swasthya"
+    diseases: Optional[List[str]] = None
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
@@ -23,9 +24,16 @@ class UserUpdate(BaseModel):
     height: Optional[float] = None
     weight: Optional[float] = None
     preferred_mode: Optional[Literal["beast", "swasthya"]] = None
+    diseases: Optional[List[str]] = None
 
 class UserInDB(UserBase):
     id: int
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    height: Optional[float] = None
+    weight: Optional[float] = None
+    preferred_mode: Optional[Literal["beast", "swasthya"]] = "swasthya"
+    diseases: Optional[List[str]] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 

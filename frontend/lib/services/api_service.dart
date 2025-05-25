@@ -7,14 +7,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiService {
   // Default to localhost for emulator, but allow override
   static String baseUrl =
-      "http://192.168.4.86:5000"; // Using computer's IP address for physical device
+      "http://192.168.4.204:5000"; // Using computer's IP address for physical device
 
   // Fallback URLs to try if the main URL fails
   static final List<String> fallbackUrls = [
     "http://10.0.2.2:5000", // For Android emulator
     "http://localhost:5000",
     "http://127.0.0.1:5000",
-    "http://192.168.1.100:5000", // Adding the IP address from the error logs
+    "http://192.168.7.138:5000", // Adding the client IP address from the error logs
+    "http://192.168.1.100:5000", // Adding another IP address from the error logs
     "http://0.0.0.0:5000", // Try binding to all interfaces
   ];
 
@@ -28,6 +29,20 @@ class ApiService {
   static void updateBaseUrl(String newUrl) {
     baseUrl = newUrl;
     print("API base URL updated to: $baseUrl");
+  }
+  
+  // Method to initialize the API service with the correct URL
+  static Future<void> initializeApiService() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedUrl = prefs.getString('server_url');
+    
+    if (savedUrl != null) {
+      baseUrl = savedUrl;
+      print("Initialized API base URL from preferences: $baseUrl");
+    }
+    
+    // Test the connection to find a working URL
+    await testServerConnection();
   }
 
   // Method to get the current user ID from shared preferences
@@ -290,7 +305,10 @@ class ApiService {
       throw Exception("Not authenticated");
     }
 
-    final url = Uri.parse("$baseUrl/users/me");
+    // Try each URL in sequence
+    List<String> urlsToTry = [baseUrl, ...fallbackUrls];
+    SocketException? lastSocketException;
+    
     final Map<String, dynamic> updateData = {};
 
     if (name != null) updateData['full_name'] = name;
@@ -302,21 +320,96 @@ class ApiService {
     if (weight != null) updateData['weight'] = weight;
     if (mode != null) updateData['preferred_mode'] = mode;
     if (diseases != null) updateData['diseases'] = diseases;
+    
+    print("Updating user profile with data: ${json.encode(updateData)}");
 
-    final response = await http.put(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-      body: json.encode(updateData),
-    );
+    for (String currentUrl in urlsToTry) {
+      try {
+        final url = Uri.parse("$currentUrl/users/me");
+        print("Trying to update profile at: $url");
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
+        final response = await http.put(
+          url,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+          body: json.encode(updateData),
+        ).timeout(const Duration(seconds: 10));
+
+        print("Profile update response status: ${response.statusCode}");
+        print("Profile update response body: ${response.body}");
+
+        // Handle redirect (307)
+        if (response.statusCode == 307) {
+          String? redirectUrl = response.headers['location'];
+          if (redirectUrl != null) {
+            print("Redirecting to: $redirectUrl");
+            final redirectResponse = await http.put(
+              Uri.parse(redirectUrl),
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer $token",
+              },
+              body: json.encode(updateData),
+            ).timeout(const Duration(seconds: 10));
+            
+            if (redirectResponse.statusCode == 200) {
+              // Update baseUrl if redirect was successful
+              if (currentUrl != baseUrl) {
+                print("Updating baseUrl to working server: $currentUrl");
+                baseUrl = currentUrl;
+                await prefs.setString('server_url', currentUrl);
+              }
+              return json.decode(redirectResponse.body);
+            }
+          }
+        }
+
+        if (response.statusCode == 200) {
+          // If successful, update the baseUrl to the working URL for future requests
+          if (currentUrl != baseUrl) {
+            print("Updating baseUrl to working server: $currentUrl");
+            baseUrl = currentUrl;
+            await prefs.setString('server_url', currentUrl);
+          }
+          return json.decode(response.body);
+        } else {
+          String errorMessage;
+          try {
+            final errorData = json.decode(response.body);
+            errorMessage =
+                errorData['detail'] ??
+                "Failed to update profile: ${response.statusCode}";
+          } catch (e) {
+            errorMessage = "Failed to update profile: ${response.statusCode}";
+          }
+          // Don't throw exception yet, try other URLs
+          print("Error with $currentUrl: $errorMessage");
+        }
+      } catch (e) {
+        print("Profile update error with $currentUrl: $e");
+        if (e is SocketException) {
+          // Save the exception but continue to the next URL
+          lastSocketException = e;
+          continue;
+        } else if (e is! TimeoutException) {
+          // For non-connection errors, continue to next URL
+          continue;
+        }
+      }
+    }
+
+    // If we've tried all URLs and still have a connection error
+    if (lastSocketException != null) {
+      throw Exception(
+        "Connection failed. Please check your internet connection and server settings. "
+        "Make sure the BhojanBuddy server is running and accessible.",
+      );
     } else {
-      final errorData = json.decode(response.body);
-      throw Exception(errorData['detail'] ?? "Failed to update profile");
+      throw Exception(
+        "Failed to update profile. Please check your server settings and try again.",
+      );
     }
   }
 
@@ -336,38 +429,112 @@ class ApiService {
       throw Exception("Not authenticated");
     }
 
-    // The correct endpoint based on backend routes
-    final url = Uri.parse("$baseUrl/api/bmi");
+    // Try each URL in sequence
+    List<String> urlsToTry = [baseUrl, ...fallbackUrls];
+    SocketException? lastSocketException;
 
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-      body: json.encode({
-        "user_id": userId,
-        "height": height,
-        "weight": weight,
-        "bmi": bmi,
-        "bmi_category": bmiCategory,
-        "mode": mode,
-      }),
-    );
-
-    if (response.statusCode == 201) {
-      return json.decode(response.body);
-    } else {
-      String errorMessage;
+    for (String currentUrl in urlsToTry) {
       try {
-        final errorData = json.decode(response.body);
-        errorMessage =
-            errorData['detail'] ??
-            "Failed to save BMI record: ${response.statusCode}";
+        // The correct endpoint based on backend routes
+        final url = Uri.parse("$currentUrl/api/bmi");
+        print("Trying to save BMI record at: $url");
+
+        final response = await http.post(
+          url,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+          body: json.encode({
+            "user_id": userId,
+            "height": height,
+            "weight": weight,
+            "bmi": bmi,
+            "bmi_category": bmiCategory,
+            "mode": mode,
+          }),
+        ).timeout(const Duration(seconds: 10));
+
+        print("BMI save response status: ${response.statusCode}");
+        print("BMI save response body: ${response.body}");
+
+        // Handle redirect (307)
+        if (response.statusCode == 307) {
+          String? redirectUrl = response.headers['location'];
+          if (redirectUrl != null) {
+            print("Redirecting to: $redirectUrl");
+            final redirectResponse = await http.post(
+              Uri.parse(redirectUrl),
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer $token",
+              },
+              body: json.encode({
+                "user_id": userId,
+                "height": height,
+                "weight": weight,
+                "bmi": bmi,
+                "bmi_category": bmiCategory,
+                "mode": mode,
+              }),
+            ).timeout(const Duration(seconds: 10));
+            
+            if (redirectResponse.statusCode == 201) {
+              // Update baseUrl if redirect was successful
+              if (currentUrl != baseUrl) {
+                print("Updating baseUrl to working server: $currentUrl");
+                baseUrl = currentUrl;
+                await prefs.setString('server_url', currentUrl);
+              }
+              return json.decode(redirectResponse.body);
+            }
+          }
+        }
+
+        if (response.statusCode == 201) {
+          // If successful, update the baseUrl to the working URL for future requests
+          if (currentUrl != baseUrl) {
+            print("Updating baseUrl to working server: $currentUrl");
+            baseUrl = currentUrl;
+            await prefs.setString('server_url', currentUrl);
+          }
+          return json.decode(response.body);
+        } else {
+          String errorMessage;
+          try {
+            final errorData = json.decode(response.body);
+            errorMessage =
+                errorData['detail'] ??
+                "Failed to save BMI record: ${response.statusCode}";
+          } catch (e) {
+            errorMessage = "Failed to save BMI record: ${response.statusCode}";
+          }
+          // Don't throw exception yet, try other URLs
+          print("Error with $currentUrl: $errorMessage");
+        }
       } catch (e) {
-        errorMessage = "Failed to save BMI record: ${response.statusCode}";
+        print("BMI save error with $currentUrl: $e");
+        if (e is SocketException) {
+          // Save the exception but continue to the next URL
+          lastSocketException = e;
+          continue;
+        } else if (e is! TimeoutException) {
+          // For non-connection errors, continue to next URL
+          continue;
+        }
       }
-      throw Exception(errorMessage);
+    }
+
+    // If we've tried all URLs and still have a connection error
+    if (lastSocketException != null) {
+      throw Exception(
+        "Connection failed. Please check your internet connection and server settings. "
+        "Make sure the BhojanBuddy server is running and accessible.",
+      );
+    } else {
+      throw Exception(
+        "Failed to save BMI record. Please check your server settings and try again.",
+      );
     }
   }
 
@@ -379,27 +546,89 @@ class ApiService {
       throw Exception("Not authenticated");
     }
 
-    // The correct endpoint based on backend routes
-    final url = Uri.parse("$baseUrl/api/bmi/$userId");
+    // Try each URL in sequence
+    List<String> urlsToTry = [baseUrl, ...fallbackUrls];
+    SocketException? lastSocketException;
 
-    final response = await http.get(
-      url,
-      headers: {"Authorization": "Bearer $token"},
-    );
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      String errorMessage;
+    for (String currentUrl in urlsToTry) {
       try {
-        final errorData = json.decode(response.body);
-        errorMessage =
-            errorData['detail'] ??
-            "Failed to get BMI history: ${response.statusCode}";
+        // The correct endpoint based on backend routes
+        final url = Uri.parse("$currentUrl/api/bmi/$userId");
+        print("Trying to get BMI history from: $url");
+
+        final response = await http.get(
+          url,
+          headers: {"Authorization": "Bearer $token"},
+        ).timeout(const Duration(seconds: 10));
+
+        print("BMI history response status: ${response.statusCode}");
+
+        // Handle redirect (307)
+        if (response.statusCode == 307) {
+          String? redirectUrl = response.headers['location'];
+          if (redirectUrl != null) {
+            print("Redirecting to: $redirectUrl");
+            final redirectResponse = await http.get(
+              Uri.parse(redirectUrl),
+              headers: {"Authorization": "Bearer $token"},
+            ).timeout(const Duration(seconds: 10));
+            
+            if (redirectResponse.statusCode == 200) {
+              // Update baseUrl if redirect was successful
+              if (currentUrl != baseUrl) {
+                print("Updating baseUrl to working server: $currentUrl");
+                baseUrl = currentUrl;
+                await prefs.setString('server_url', currentUrl);
+              }
+              return json.decode(redirectResponse.body);
+            }
+          }
+        }
+
+        if (response.statusCode == 200) {
+          // If successful, update the baseUrl to the working URL for future requests
+          if (currentUrl != baseUrl) {
+            print("Updating baseUrl to working server: $currentUrl");
+            baseUrl = currentUrl;
+            await prefs.setString('server_url', currentUrl);
+          }
+          return json.decode(response.body);
+        } else {
+          String errorMessage;
+          try {
+            final errorData = json.decode(response.body);
+            errorMessage =
+                errorData['detail'] ??
+                "Failed to get BMI history: ${response.statusCode}";
+          } catch (e) {
+            errorMessage = "Failed to get BMI history: ${response.statusCode}";
+          }
+          // Don't throw exception yet, try other URLs
+          print("Error with $currentUrl: $errorMessage");
+        }
       } catch (e) {
-        errorMessage = "Failed to get BMI history: ${response.statusCode}";
+        print("BMI history error with $currentUrl: $e");
+        if (e is SocketException) {
+          // Save the exception but continue to the next URL
+          lastSocketException = e;
+          continue;
+        } else if (e is! TimeoutException) {
+          // For non-connection errors, continue to next URL
+          continue;
+        }
       }
-      throw Exception(errorMessage);
+    }
+
+    // If we've tried all URLs and still have a connection error
+    if (lastSocketException != null) {
+      throw Exception(
+        "Connection failed. Please check your internet connection and server settings. "
+        "Make sure the BhojanBuddy server is running and accessible.",
+      );
+    } else {
+      throw Exception(
+        "Failed to get BMI history. Please check your server settings and try again.",
+      );
     }
   }
 

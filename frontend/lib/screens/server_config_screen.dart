@@ -200,7 +200,7 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
               TextFormField(
                 controller: _serverUrlController,
                 decoration: InputDecoration(
-                  hintText: "http://192.168.4.86:5000",
+                  hintText: "http://192.168.4.204:5000",
                   filled: true,
                   fillColor: Colors.grey.shade100,
                   border: OutlineInputBorder(
@@ -228,7 +228,7 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
               const Text(
                 "• For Android emulators: use 10.0.2.2:5000\n"
                 "• For iOS simulators: use 127.0.0.1:5000\n"
-                "• For physical devices: use your computer's IP address (e.g., 192.168.4.86:5000)\n"
+                "• For physical devices: use your computer's IP address (e.g., 192.168.4.204:5000)\n"
                 "• Make sure your device is on the same network as the server\n"
                 "• Ensure the backend server is running",
                 style: TextStyle(fontSize: 14, color: Colors.grey),

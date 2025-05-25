@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Enum
+from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, JSON
 from sqlalchemy.sql import func
 import enum
 from app.db.database import Base
@@ -19,5 +19,6 @@ class User(Base):
     height = Column(Float, nullable=True)
     weight = Column(Float, nullable=True)
     preferred_mode = Column(Enum(ModeType), default=ModeType.SWASTHYA, nullable=True)
+    diseases = Column(JSON, nullable=True)  # Store diseases as JSON array
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

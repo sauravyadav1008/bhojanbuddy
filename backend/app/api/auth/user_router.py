@@ -54,6 +54,12 @@ async def update_user(
         current_user.weight = user_update.weight
     if user_update.preferred_mode is not None:
         current_user.preferred_mode = user_update.preferred_mode
+    if user_update.diseases is not None:
+        current_user.diseases = user_update.diseases
+    
+    # Print debug information
+    print(f"Updating user {current_user.id} with mode: {current_user.preferred_mode}")
+    print(f"Updated user fields: {user_update.dict(exclude_unset=True)}")
     
     db.commit()
     db.refresh(current_user)
