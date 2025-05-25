@@ -2,7 +2,18 @@
 
 A food tracking application with BMI calculation and food recognition features.
 
-## Setup Instructions
+---
+
+## 📱 App Screenshots
+
+
+| Login Screen | History Screen | Food Scan |
+|:------------:|:-------------:|:---------:|
+| ![Login](assets/screenshots/login.png) | ![History](assets/screenshots/history.png) | ![Scan](assets/screenshots/scan.png) |
+
+---
+
+## 🚀 Setup Instructions
 
 ### Backend Setup
 
@@ -30,7 +41,9 @@ A food tracking application with BMI calculation and food recognition features.
    flutter run
    ```
 
-## Connecting Mobile App to Backend
+---
+
+## 🔗 Connecting Mobile App to Backend
 
 When running the app on a physical device:
 
@@ -42,9 +55,11 @@ When running the app on a physical device:
 
 When running on an emulator:
 
-1. Use `http://10.0.2.2:5000` as the server URL (this is the special IP that allows the emulator to connect to the host machine's localhost)
+- Use `http://10.0.2.2:5000` as the server URL (this is the special IP that allows the emulator to connect to the host machine's localhost)
 
-## Troubleshooting
+---
+
+## 🛠 Troubleshooting
 
 If you encounter connection issues:
 
@@ -53,3 +68,19 @@ If you encounter connection issues:
 3. Try disabling the firewall temporarily for testing
 4. Ensure the backend server is running with `host=0.0.0.0` to accept external connections
 5. Check the server logs for any error messages
+
+---
+
+## 📸 More Screenshots
+
+<!-- 
+Add more usage screenshots or GIFs here.
+Example:
+![BMI Calculation](assets/screenshots/bmi.png)
+-->
+
+---
+
+## 📄 License
+
+Add your license information here.
